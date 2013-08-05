@@ -67,6 +67,7 @@
     <Compile Include="InteractionContext.cs" />
     <Compile Include="MultiTenantCloudSearchTester.cs" />
     <Compile Include="Query\StringBooleanConditionTester.cs" />
+    <Compile Include="SanitizeBadCharsTester.cs" />
     <Compile Include="SpecificationExtensions.cs" />
     <Compile Include="TestMovie.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

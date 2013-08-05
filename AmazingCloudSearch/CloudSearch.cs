@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
+using System.Text.RegularExpressions;
 using AmazingCloudSearch.Builder;
 using AmazingCloudSearch.Contract;
 using AmazingCloudSearch.Contract.Result;
@@ -40,6 +37,7 @@ namespace AmazingCloudSearch
         public string TenantParameterName { get; set; }
         public string Tenant { get; set; }
     }
+
 
     public interface ICloudSearch<TDocument> where TDocument : ICloudSearchDocument, new()
     {
@@ -102,6 +100,7 @@ namespace AmazingCloudSearch
 
     public class CloudSearch<TDocument> : ICloudSearch<TDocument> where TDocument : ICloudSearchDocument, new()
     {
+        public static readonly Regex BadCharsRegex = new Regex(@"[^\u0009\u000A\u000D\u0020-\u007F\u0100-\uD7FF\uE000-\uFFFD]", RegexOptions.Compiled);
         readonly string _documentUri;
         readonly string _searchUri;
         readonly ActionBuilder<TDocument> _actionBuilder;
@@ -288,7 +287,7 @@ namespace AmazingCloudSearch
 
         TResult PerformDocumentAction<TResult>(List<BasicDocumentAction> liAction) where TResult : BasicResult, new()
         {
-            var actionJson = JsonConvert.SerializeObject(liAction);
+            var actionJson = SanitizeForCloudSearch(JsonConvert.SerializeObject(liAction));
 
             var jsonResult = _webHelper.PostRequest(_documentUri, actionJson);
 
@@ -312,6 +311,12 @@ namespace AmazingCloudSearch
             var listAction = new List<BasicDocumentAction> { basicDocumentAction };
 
             return PerformDocumentAction<TResult>(listAction);
+        }
+
+        public static string SanitizeForCloudSearch(string raw)
+        {
+            if (raw == null) return null;
+            return BadCharsRegex.Replace(raw, "");
         }
     }
 }
