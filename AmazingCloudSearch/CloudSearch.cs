@@ -100,7 +100,7 @@ namespace AmazingCloudSearch
 
     public class CloudSearch<TDocument> : ICloudSearch<TDocument> where TDocument : ICloudSearchDocument, new()
     {
-        public static readonly Regex BadCharsRegex = new Regex(@"[^\u0009\u000A\u000D\u0020-\u007F\u0100-\uD7FF\uE000-\uFFFD]", RegexOptions.Compiled);
+        public static readonly Regex BadCharsRegex = new Regex(@"[^\u0009\u000a\u000d\u0020-\uD7FF\uE000-\uFFFD]", RegexOptions.Compiled);
         readonly string _documentUri;
         readonly string _searchUri;
         readonly ActionBuilder<TDocument> _actionBuilder;
@@ -170,10 +170,10 @@ namespace AmazingCloudSearch
 
             return result;
         }
-        
+
         TResult combineResults<TResult>(List<BasicDocumentAction> liAction, List<TResult> results) where TResult : BasicResult, new()
         {
-            var result = Activator.CreateInstance<TResult>();            
+            var result = Activator.CreateInstance<TResult>();
             if (result.errors == null)
             {
                 result.errors = new List<Error>();
